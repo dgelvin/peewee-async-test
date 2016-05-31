@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+
+import unittest
+from unittest import TestLoader
+
 import os
 
 from asynctest import TestCase
@@ -72,3 +77,7 @@ class UnitTests(TestCase):
         user = await User.create(name='bob')
         new_user = await User.get(name=user.name)
         self.assertEqual(user.id, new_user.id)
+
+if __name__ == '__main__':
+    tests = TestLoader().discover('.')
+    unittest.TextTestRunner(verbosity=2).run(tests)
