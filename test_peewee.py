@@ -50,6 +50,7 @@ class User(BaseModel):
 
 
 class UnitTests(TestCase):
+
     def setUp(self):
         Database.init_db(
             database_name=os.environ[PG_DATABASE_ENV_VAR],
@@ -63,8 +64,11 @@ class UnitTests(TestCase):
         Database.database.close()
 
     async def test_one(self):
-        user = User.create(username='bob')
+        user = await User.create(name='bob')
+        new_user = await User.get(name=user.name)
+        self.assertEqual(user.id, new_user.id)
 
     async def test_two(self):
-        user = User.create(username='bob')
-
+        user = await User.create(name='bob')
+        new_user = await User.get(name=user.name)
+        self.assertEqual(user.id, new_user.id)
