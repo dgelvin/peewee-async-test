@@ -1,6 +1,6 @@
 # To run
 
-## Environemnt variables:
+## Environment variables:
     
     PG_USER=my_postgres_username
     PG_PASSWORD=my_postgres_password
