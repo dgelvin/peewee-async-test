@@ -1,3 +1,5 @@
+import os
+
 from asynctest import TestCase
 
 from peewee import Model, Proxy, CharField
@@ -10,15 +12,14 @@ PG_DATABASE_ENV_VAR = 'PG_DATABASE'
 
 
 class Database:
-    aio_manager = None
     database = Proxy()
+    aio_manager = Manager(database)
 
     @classmethod
     def init_db(cls, database_name, **kwargs):
         database = PostgresqlDatabase(database_name, **kwargs)
         cls.database.initialize(database)
         User.create_table(fail_silently=True)
-        cls.aio_manager = Manager(cls.database)
         database.allow_sync = False
 
     @classmethod
@@ -50,12 +51,20 @@ class User(BaseModel):
 
 class UnitTests(TestCase):
     def setUp(self):
-        Database.init_db(database_name='pwt', host='172.17.0.2', user='postgres', password='abc123')
+        Database.init_db(
+            database_name=os.environ[PG_DATABASE_ENV_VAR],
+            host=os.environ.get(PG_HOST_ENV_VAR, 'localhost'),
+            user=os.environ.get(PG_USER_ENV_VAR, 'postgres'),
+            password=os.environ.get(PG_PASSWORD_ENV_VAR),
+        )
 
     def tearDown(self):
         Database.drop_tables()
         Database.database.close()
 
     async def test_one(self):
+        user = User.create(username='bob')
+
+    async def test_two(self):
         user = User.create(username='bob')
 
